@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="en" class="nhsuk-template" id="html-root">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PCN Primary Care Rota & Capacity Tracker [Enterprise Edition]</title>
+
+  <!-- NHS UK Frontend CSS for accessible typography/components -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/nhsuk-frontend@9.2.0/dist/nhsuk-9.2.0.min.css">
+  
+  <style>
+    :root {
+      --bg-color: #f0f4f5;
+      --text-color: #212b32;
+      --card-bg: #ffffff;
+      --border-color: #d8dde0;
+      --header-bg: #005ea5;
+      --hero-bg: #004b84;
+      --muted-color: #4c6272;
+      --input-bg: #ffffff;
+    }
+    [data-theme="dark"] {
+      --bg-color: #0b0c0c;
+      --text-color: #ffffff;
+      --card-bg: #1f2421;
+      --border-color: #384148;
+      --header-bg: #12171a;
+      --hero-bg: #1a2228;
+      --muted-color: #aeb7bd;
+      --input-bg: #2d353c;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      margin: 0;
+      padding: 0;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    .demo-notice-bar {
+      background-color: #ffeb3b;
+      color: #212b32;
+      font-weight: bold;
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .custom-header-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #ffffff;
+    }
+    .custom-header-logo svg {
+      fill: #ffffff;
+      flex-shrink: 0;
+    }
+    .demo-tag {
+      background-color: #d2e2f0;
+      color: #002f55;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .kpi-card, .rota-table-container, .admin-card, .analytics-card {
+      background: var(--card-bg);
+      color: var(--text-color);
+      border-radius: 4px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      border: 1px solid var(--border-color);
+      border-top: 4px solid #005ea5;
+    }
+    .kpi-card.success {
+      border-top-color: #007f3b;
+    }
+    .kpi-number {
+      font-size: 32px;
+      font-weight: 700;
+      margin: 0;
+      color: var(--text-color);
+    }
+    .kpi-label {
+      font-size: 14px;
+      color: var(--muted-color);
+      margin: 4px 0 0 0;
+    }
+    .badge-leave {
+      background-color: #d8ede2;
+      color: #005a36;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 2px;
+      display: inline-block;
+    }
+    .badge-cover {
+      background-color: #fff3cd;
+      color: #856404;
+      padding: 4px 8px;
+      font-size: 12px;
+      font-weight: bold;
+      border-radius: 2px;
+      display: inline-block;
+      border: 1px solid #ffeeba;
+    }
+    .badge-room {
+      color: #005ea5;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    [data-theme="dark"] .badge-room {
+      color: #569cd6;
+    }
+    .badge-skill {
+      background-color: #e8edee;
+      color: #003057;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-weight: 600;
+      display: inline-block;
+      margin-top: 3px;
+    }
+    [data-theme="dark"] .badge-skill {
+      background-color: #2d353c;
+      color: #aeb7bd;
+    }
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .day-editor-box {
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      padding: 12px;
+      background: var(--bg-color);
+      margin-bottom: 12px;
+    }
+    .export-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+    .export-content {
+      display: none;
+      position: absolute;
+      right: 0;
+      background-color: var(--card-bg);
+      min-width: 140px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 10;
+      border: 1px solid var(--border-color);
+    }
+    .export-content button {
+      color: var(--text-color);
+      padding: 8px 12px;
+      text-decoration: none;
+      display: block;
+      background: none;
+      border: none;
+      width: 100%;
+      text-align: left;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .export-content button:hover {
+      background-color: #005ea5;
+      color: white;
+    }
+    .export-dropdown:hover .export-content {
+      display: block;
+    }
+    .clash-warning-box {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+      padding: 12px;
+      border-radius: 4px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea {
+      background-color: var(--input-bg);
+      color: var(--text-color);
+      border-color: var(--border-color);
+    }
+    [data-theme="dark"] table {
+      color: var(--text-color);
+    }
+    [data-theme="dark"] th, [data-theme="dark"] td {
+      border-color: var(--border-color) !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Banner -->
+  <div class="demo-notice-bar">
+    ⚠️ ENTERPRISE PORTFOLIO DEMO: Synthetic data only — Not connected to any live GP or healthcare system.
+  </div>
+
+  <!-- Header -->
+  <header class="nhsuk-header" role="banner" style="background-color: var(--header-bg); padding: 12px 0; border-bottom: 1px solid var(--border-color);">
+    <div class="nhsuk-width-container nhsuk-header__container" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+      <a class="custom-header-logo" href="#" aria-label="PCN Rota Home">
+        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 2a1 1 0 0 1 2 0v7h7a1 1 0 0 1 0 2h-7v7a1 1 0 0 1-2 0v-7H4a1 1 0 0 1 0-2h7V2z" fill="#ffffff" stroke="none"/>
+        </svg>
+        <span style="font-size: 20px; font-weight: 700; color: #ffffff;">
+          Primary Care Rota & Capacity Tracker
+          <span class="demo-tag">Enterprise Edition</span>
+        </span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <!-- Role Simulation Selector -->
+        <div style="background: rgba(255,255,255,0.15); padding: 4px 10px; border-radius: 4px; font-size: 13px; color: #fff; display: flex; align-items: center; gap: 6px;">
+          <label for="user-role-select" style="font-weight: bold;">View Mode:</label>
+          <select id="user-role-select" onchange="switchUserRole()" style="background: #fff; color: #212b32; border: none; padding: 2px 6px; border-radius: 3px; font-weight: bold; cursor: pointer;">
+            <option value="standard">Standard Staff</option>
+            <option value="manager">Management / Finance</option>
+          </select>
+        </div>
+        <button class="nhsuk-button nhsuk-button--secondary" onclick="toggleDarkMode()" style="margin: 0; background: transparent; color: #ffffff; border: 1px solid #ffffff;" id="dark-mode-btn">🌙 Dark Mode</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Banner -->
+  <section class="nhsuk-hero" style="background-color: var(--hero-bg); padding: 24px 0; color: #fff;">
+    <div class="nhsuk-width-container">
+      <h1 style="color: #fff; margin-bottom: 8px; font-size: 32px;">Westside Primary Care Network (Demo)</h1>
+      <p class="nhsuk-body-m" style="color: #e8edee; margin: 0;">Multi-site ARRS rotations, secure £215k cap tracking, mileage expenses, leave clash safeguards, directory messaging, and AfC overtime management.</p>
+    </div>
+  </section>
+
+  <!-- Main Content Container -->
+  <main class="nhsuk-width-container nhsuk-u-margin-top-6 nhsuk-u-margin-bottom-8" id="main-content">
+
+    <!-- KPI Summary Row -->
+    <div class="nhsuk-grid-row">
+      <div class="nhsuk-grid-column-one-quarter">
+        <div class="kpi-card">
+          <p class="kpi-number" id="kpi-staff">4</p>
+          <p class="kpi-label">Active ARRS Staff</p>
+        </div>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter">
+        <div class="kpi-card" id="kpi-card-reimbursement">
+          <p class="kpi-number" id="kpi-reimbursement">£215k</p>
+          <p class="kpi-label">Active ARRS Claim / Cap</p>
+        </div>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter">
+        <div class="kpi-card">
+          <p class="kpi-number" id="kpi-rooms">22 / 25</p>
+          <p class="kpi-label">Rooms Allocated</p>
+        </div>
+      </div>
+      <div class="nhsuk-grid-column-one-quarter">
+        <div class="kpi-card success">
+          <p class="kpi-number" id="kpi-util">88%</p>
+          <p class="kpi-label">Capacity Utilization</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="nhsuk-button" id="tab-btn-view" onclick="switchTab('view')">View Rota</button>
+      <button class="nhsuk-button nhsuk-button--secondary" id="tab-btn-reception" onclick="switchTab('reception')">🏥 Reception Router</button>
+      <button class="nhsuk-button nhsuk-button--secondary" id="tab-btn-directory" onclick="switchTab('directory')">💬 Clinician Directory & Teams</button>
+      <button class="nhsuk-button nhsuk-button--secondary" id="tab-btn-master" onclick="switchTab('master')">🖨️ Master Rota Book</button>
+      <!-- Restricted Management / Admin Tab -->
+      <button class="nhsuk-button nhsuk-button--secondary" id="tab-btn-admin" onclick="switchTab('admin')" style="display: none; border: 2px dashed #ffeb3b;">🔒 Admin & Finance Hub</button>
+    </div>
+
+    <!-- SECTION 1: PUBLIC / STANDARD VIEW -->
+    <div id="view-section">
+      <div class="nhsuk-card nhsuk-u-margin-bottom-6" style="padding: 20px; background: var(--card-bg); border: 1px solid var(--border-color);">
+        <fieldset class="nhsuk-fieldset">
+          <legend class="nhsuk-fieldset__legend nhsuk-fieldset__legend--m">
+            <h2 class="nhsuk-fieldset__heading" style="font-size: 20px; color: var(--text-color);">Filter Rota View</h2>
+          </legend>
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-third">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="filter-week" style="color: var(--text-color);">Select Week Ahead</label>
+                <select class="nhsuk-select" id="filter-week" name="filter-week" onchange="filterTable()">
+                  <option value="2026-10-12">Week: Mon 12 Oct 2026</option>
+                  <option value="2026-10-19">Week: Mon 19 Oct 2026</option>
+                  <option value="2026-10-26">Week: Mon 26 Oct 2026</option>
+                  <option value="2026-11-02">Week: Mon 02 Nov 2026</option>
+                  <option value="2026-11-09">Week: Mon 09 Nov 2026</option>
+                </select>
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-third">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="filter-practice" style="color: var(--text-color);">Surgery / Branch Site</label>
+                <select class="nhsuk-select" id="filter-practice" name="filter-practice" onchange="filterTable()">
+                  <option value="All">All PCN Sites & Branches</option>
+                  <optgroup label="Oakwood Health Group">
+                    <option value="Oakwood Surgery - Main Site">Oakwood Surgery (Main Site)</option>
+                    <option value="Oakwood - St. Jude's Branch">Oakwood - St. Jude's Branch</option>
+                  </optgroup>
+                  <optgroup label="Riverview Medical Practice">
+                    <option value="Riverview Medical Centre">Riverview Medical Centre (Main)</option>
+                    <option value="Riverview - Northside Clinic">Riverview - Northside Clinic</option>
+                  </optgroup>
+                  <optgroup label="Meadow & Crossroads">
+                    <option value="Meadow Health Centre">Meadow Health Centre</option>
+                    <option value="Crossroads Practice">Crossroads Practice</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-third">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="filter-role" style="color: var(--text-color);">ARRS Role</label>
+                <select class="nhsuk-select" id="filter-role" name="filter-role" onchange="filterTable()">
+                  <option value="All">All Roles</option>
+                  <option value="Care Coordinator">Care Coordinator</option>
+                  <option value="Clinical Pharmacist">Clinical Pharmacist</option>
+                  <option value="First Contact Physio">First Contact Physio</option>
+                  <option value="GP Assistant">GP Assistant</option>
+                  <option value="Social Prescriber">Social Prescriber</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </fieldset>
+      </div>
+
+      <!-- Rota Table Container -->
+      <div class="rota-table-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+          <h2 class="nhsuk-heading-m" style="margin: 0; color: var(--text-color);">Weekly Rota Overview</h2>
+          <span class="nhsuk-tag nhsuk-tag--blue" id="current-week-tag">Week: Mon 12 Oct 2026</span>
+        </div>
+
+        <div style="overflow-x: auto;">
+          <table class="nhsuk-table" id="rota-table">
+            <thead class="nhsuk-table__head">
+              <tr class="nhsuk-table__row">
+                <th scope="col" class="nhsuk-table__header">Clinician / Staff & Competencies</th>
+                <th scope="col" class="nhsuk-table__header">Monday</th>
+                <th scope="col" class="nhsuk-table__header">Tuesday</th>
+                <th scope="col" class="nhsuk-table__header">Wednesday</th>
+                <th scope="col" class="nhsuk-table__header">Thursday</th>
+                <th scope="col" class="nhsuk-table__header">Friday</th>
+                <th scope="col" class="nhsuk-table__header">Actions</th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body" id="table-body">
+              <!-- JavaScript renders rows dynamically here -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 2: RECEPTION ROUTING GUIDE -->
+    <div id="reception-section" style="display: none;">
+      <div class="analytics-card">
+        <h2 class="nhsuk-heading-l" style="color: #005ea5; margin-bottom: 8px;">🏥 ARRS Reception Routing Assistant</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">Select a patient's presenting symptom or query type to instantly identify which ARRS clinician is on duty today and qualified to help.</p>
+        
+        <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-half">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="routing-category" style="color: var(--text-color);"><strong>Select Patient Need / Category</strong></label>
+              <select class="nhsuk-select" id="routing-category" onchange="runReceptionRouting()">
+                <option value="MSK">Musculoskeletal pain / joint stiffness / back ache</option>
+                <option value="Medication">Medication review / repeat query / side effects</option>
+                <option value="Social">Loneliness / housing worries / financial or benefit advice</option>
+                <option value="CareCoord">Complex care coordination / multiple appointments / frail elderly support</option>
+                <option value="GPAsst">Administrative support / clinic prep / blood test follow-up queries</option>
+              </select>
+            </div>
+          </div>
+          <div class="nhsuk-grid-column-one-half">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="routing-day" style="color: var(--text-color);"><strong>Select Day of Week</strong></label>
+              <select class="nhsuk-select" id="routing-day" onchange="runReceptionRouting()">
+                <option value="Mon">Monday</option>
+                <option value="Tue">Tuesday</option>
+                <option value="Wed">Wednesday</option>
+                <option value="Thu">Thursday</option>
+                <option value="Fri">Friday</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="routing-result-box" style="background: var(--bg-color); border: 2px solid #005ea5; padding: 20px; border-radius: 4px; margin-top: 16px;">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: CLINICIAN DIRECTORY & TEAMS MESSAGING -->
+    <div id="directory-section" style="display: none;">
+      <div class="analytics-card">
+        <h2 class="nhsuk-heading-l" style="color: #005ea5; margin-bottom: 8px;">💬 Clinician Directory & Microsoft Teams Integration</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">Instantly view network contact details and initiate secure Microsoft Teams chats for urgent rota cover or patient escalations.</p>
+        
+        <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+
+        <div style="overflow-x: auto;">
+          <table class="nhsuk-table">
+            <thead class="nhsuk-table__head">
+              <tr class="nhsuk-table__row">
+                <th scope="col" class="nhsuk-table__header">Clinician Name</th>
+                <th scope="col" class="nhsuk-table__header">ARRS Role</th>
+                <th scope="col" class="nhsuk-table__header">Base Site</th>
+                <th scope="col" class="nhsuk-table__header">Contact Extension</th>
+                <th scope="col" class="nhsuk-table__header">Direct Messaging</th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body" id="directory-tbody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 4: MASTER ROTA BOOK -->
+    <div id="master-section" style="display: none;">
+      <div class="analytics-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 16px;">
+          <div>
+            <h2 class="nhsuk-heading-l" style="color: #005ea5; margin: 0 0 4px 0;">🖨️ Master Practice Rota Book</h2>
+            <p class="nhsuk-body-m" style="color: var(--muted-color); margin: 0;">Comprehensive landscape overview for staff rooms and practice noticeboards.</p>
+          </div>
+          <button class="nhsuk-button" onclick="window.print()" style="margin: 0;">🖨️ Print Master Rota Book</button>
+        </div>
+
+        <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+
+        <div style="overflow-x: auto;" id="master-book-printable-area">
+          <table class="nhsuk-table" style="font-size: 13px;">
+            <thead class="nhsuk-table__head">
+              <tr class="nhsuk-table__row">
+                <th scope="col" class="nhsuk-table__header">Clinician</th>
+                <th scope="col" class="nhsuk-table__header">Role</th>
+                <th scope="col" class="nhsuk-table__header">Monday</th>
+                <th scope="col" class="nhsuk-table__header">Tuesday</th>
+                <th scope="col" class="nhsuk-table__header">Wednesday</th>
+                <th scope="col" class="nhsuk-table__header">Thursday</th>
+                <th scope="col" class="nhsuk-table__header">Friday</th>
+              </tr>
+            </thead>
+            <tbody class="nhsuk-table__body" id="master-book-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 5: RESTRICTED ADMIN, FINANCE, MILEAGE & OVERTIME HUB (MANAGEMENT ONLY) -->
+    <div id="admin-section" style="display: none;">
+      
+      <div class="admin-card" style="border-top: 4px solid #d5281b; background: var(--card-bg);">
+        <span class="nhsuk-tag" style="background-color: #fee2e2; color: #991b1b; margin-bottom: 8px;">Restricted Management Access</span>
+        <h2 class="nhsuk-heading-l" style="color: #991b1b; margin-bottom: 4px;">📊 PCN Workforce, Finance & Absence Analytics</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">NHS England ARRS reimbursement tracking, financial caps, role breakdown, and network absence clustering analysis.</p>
+        
+        <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+
+        <!-- ARRS Financial Tracker Box -->
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 16px; border-radius: 4px; margin-bottom: 24px;">
+          <h3 class="nhsuk-heading-s" style="color: #005ea5; margin-top: 0;">💰 ARRS National Reimbursement Cap Tracker (£215k Ceiling Benchmark)</h3>
+          <p class="nhsuk-body-s" style="color: var(--muted-color);">Comparing contracted WTE claims against NHS England maximum reimbursable funding limits.</p>
+          <div id="finance-tracker-container" style="display: flex; flex-direction: column; gap: 10px; margin-top: 12px;"></div>
+        </div>
+
+        <div class="nhsuk-grid-row">
+          <div class="nhsuk-grid-column-one-half">
+            <h3 class="nhsuk-heading-s" style="color: var(--text-color);">ARRS Role Hours Breakdown</h3>
+            <div id="analytics-roles-container" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;"></div>
+          </div>
+          <div class="nhsuk-grid-column-one-half">
+            <h3 class="nhsuk-heading-s" style="color: var(--text-color);">Absence & Leave Heatmap (Clinical Safety Thresholds)</h3>
+            <p class="nhsuk-body-s" style="color: var(--muted-color);">Automated 30% threshold alert monitoring for clinical discipline safety.</p>
+            <div id="analytics-leave-container" style="display: flex; flex-direction: column; gap: 8px; margin-top: 12px;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW ENHANCEMENT 1: Multi-Site Mileage & Travel Expenses Calculator -->
+      <div class="admin-card" style="border-top: 4px solid #005ea5;">
+        <h2 class="nhsuk-heading-l" style="color: #005ea5; margin-bottom: 8px;">🚗 Multi-Site Mileage & Travel Expenses Calculator</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">Calculate business travel expenses between PCN branch surgeries based on NHS standard business mileage guidelines.</p>
+        
+        <!-- MANDATORY POLICY NOTICE -->
+        <div style="background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 12px; border-radius: 4px; margin: 12px 0; font-size: 13px;">
+          <strong>⚠️ Important Policy Notice:</strong> Mileage expenses can only be claimed if agreed upon in advance with your line manager and explicitly outlined as part of your contractual **Employee Arrangement** or multi-site job plan.
+        </div>
+
+        <div class="nhsuk-grid-row" style="margin-top: 12px;">
+          <div class="nhsuk-grid-column-one-third">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="mileage-staff" style="color: var(--text-color);">Select Clinician</label>
+              <select class="nhsuk-select" id="mileage-staff">
+                <option value="Gemma Taylor">Gemma Taylor (Care Coordinator)</option>
+                <option value="Dr. Aisha Khan">Dr. Aisha Khan (Clinical Pharmacist)</option>
+                <option value="David Chen">David Chen (First Contact Physio)</option>
+                <option value="Sarah Johnson">Sarah Johnson (Social Prescriber)</option>
+              </select>
+            </div>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="mileage-miles" style="color: var(--text-color);">Weekly Inter-Site Miles Driven</label>
+              <input class="nhsuk-input" id="mileage-miles" type="number" value="35" min="0" step="1">
+            </div>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="mileage-rate" style="color: var(--text-color);">NHS Reimbursement Rate</label>
+              <input class="nhsuk-input" id="mileage-rate" type="text" value="£0.56 per mile (First 3,500)" readonly style="background: var(--bg-color);">
+            </div>
+          </div>
+        </div>
+        <button class="nhsuk-button" type="button" onclick="calculateMileageClaim()" style="margin-top: 8px;">Calculate Claim Total</button>
+        <div id="mileage-result-box" style="margin-top: 12px; font-weight: bold; color: var(--text-color);"></div>
+      </div>
+
+      <!-- NEW ENHANCEMENT 2: Agenda for Change Overtime & Additional Hours Module -->
+      <div class="admin-card" style="border-top: 4px solid #6f42c1;">
+        <h2 class="nhsuk-heading-l" style="color: #6f42c1; margin-bottom: 8px;">⏱️ Agenda for Change Overtime & Additional Hours</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">Track extra rostered shifts beyond the standard 37.5-hour AfC working week, calculating Time-and-a-Half (1.5x) or TOIL.</p>
+        
+        <div class="nhsuk-grid-row" style="margin-top: 12px;">
+          <div class="nhsuk-grid-column-one-third">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="overtime-staff" style="color: var(--text-color);">Select Staff Member</label>
+              <select class="nhsuk-select" id="overtime-staff">
+                <option value="Gemma Taylor">Gemma Taylor</option>
+                <option value="Dr. Aisha Khan">Dr. Aisha Khan</option>
+                <option value="David Chen">David Chen</option>
+                <option value="Sarah Johnson">Sarah Johnson</option>
+              </select>
+            </div>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="overtime-hours" style="color: var(--text-color);">Additional Hours Worked</label>
+              <input class="nhsuk-input" id="overtime-hours" type="number" value="5.5" min="0.5" step="0.5">
+            </div>
+          </div>
+          <div class="nhsuk-grid-column-one-third">
+            <div class="nhsuk-form-group">
+              <label class="nhsuk-label" for="overtime-type" style="color: var(--text-color);">Compensation Type</label>
+              <select class="nhsuk-select" id="overtime-type">
+                <option value="Overtime15">Paid Overtime (Time & a Half - 1.5x)</option>
+                <option value="BankHoliday20">Public / Bank Holiday (Double Time - 2.0x)</option>
+                <option value="TOIL">Time Off In Lieu (TOIL)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <button class="nhsuk-button" type="button" onclick="calculateOvertimeClaim()" style="background-color: #6f42c1; margin-top: 8px;">Process Overtime Claim</button>
+        <div id="overtime-result-box" style="margin-top: 12px; font-weight: bold; color: var(--text-color);"></div>
+      </div>
+
+      <!-- NEW ENHANCEMENT 3: Historical Audit Trail -->
+      <div class="admin-card" style="border-top: 4px solid #ff5722;">
+        <h2 class="nhsuk-heading-l" style="color: #ff5722; margin-bottom: 8px;">📜 Historical Audit Trail & Change Log</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">Information Governance (IG) compliance log recording all rota modifications and management overrides.</p>
+        
+        <div style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 12px; border-radius: 4px; max-height: 200px; overflow-y: auto; margin-top: 12px;" id="audit-log-container">
+          <p style="font-size: 13px; color: var(--muted-color); margin: 0;">[2026-10-10 09:15] System initialized with default WTE baseline.<br>[2026-10-12 14:22] Manager override: Assigned cover for Sarah Johnson on Wed.</p>
+        </div>
+      </div>
+
+      <!-- Bulk Upload Rota Card -->
+      <div class="admin-card" style="border-top: 4px solid #007f3b;">
+        <h2 class="nhsuk-heading-l" style="color: #007f3b; margin-bottom: 8px;">📂 Bulk Upload Rota (.csv)</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">Save time by uploading a completed CSV rota file. Format expected: <br><code>Staff Name, Role, Day (Mon/Tue/Wed/Thu/Fri), Practice/Site, Room/Suite, Hours</code></p>
+        
+        <div class="nhsuk-form-group" style="margin-top: 16px;">
+          <label class="nhsuk-label" for="csv-file-input" style="color: var(--text-color);"><strong>Select CSV Rota File</strong></label>
+          <input class="nhsuk-input" type="file" id="csv-file-input" accept=".csv" style="padding: 6px;">
+        </div>
+        <button class="nhsuk-button" type="button" onclick="handleBulkCsvUpload()" style="background-color: #007f3b;">Upload & Parse Rota</button>
+      </div>
+
+      <!-- Existing Staff Editor Card -->
+      <div class="admin-card">
+        <h2 class="nhsuk-heading-l" id="admin-form-title" style="color: #005ea5; margin-bottom: 8px;">Add New ARRS Staff Member</h2>
+        <p class="nhsuk-body-m" style="color: var(--muted-color);">Select an existing staff member to update their schedule, competencies, and financial reimbursement band, or fill out the details below.</p>
+        
+        <hr class="nhsuk-section-break nhsuk-section-break--m nhsuk-section-break--visible">
+
+        <!-- Real-Time Conflict / Clash Warning Banner -->
+        <div class="clash-warning-box" id="clash-warning-banner">
+          <strong>⚠️ Scheduling Conflict Detected:</strong> <span id="clash-warning-text">Room or double-booking overlap detected.</span>
+        </div>
+
+        <div class="nhsuk-form-group">
+          <label class="nhsuk-label" for="admin-select-staff" style="color: var(--text-color);"><strong>Select Staff Member to Edit (or select 'New Staff')</strong></label>
+          <select class="nhsuk-select" id="admin-select-staff" onchange="loadStaffIntoAdminForm()">
+            <option value="NEW">-- Add New Staff Member --</option>
+          </select>
+        </div>
+
+        <form id="admin-rota-form" onsubmit="handleAdminSubmit(event)">
+          <div class="nhsuk-grid-row">
+            <div class="nhsuk-grid-column-one-third">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="admin-staff-name" style="color: var(--text-color);">Staff Name</label>
+                <input class="nhsuk-input" id="admin-staff-name" type="text" placeholder="e.g. Jane Doe" required>
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-third">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="admin-staff-role" style="color: var(--text-color);">ARRS Role</label>
+                <select class="nhsuk-select" id="admin-staff-role" required>
+                  <option value="Care Coordinator">Care Coordinator</option>
+                  <option value="Clinical Pharmacist">Clinical Pharmacist</option>
+                  <option value="First Contact Physio">First Contact Physio</option>
+                  <option value="GP Assistant">GP Assistant</option>
+                  <option value="Social Prescriber">Social Prescriber</option>
+                </select>
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-third">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="admin-staff-wte" style="color: var(--text-color);">Contracted WTE (e.g. 1.0)</label>
+                <input class="nhsuk-input" id="admin-staff-wte" type="number" step="0.1" min="0.1" max="1.0" value="1.0" required>
+              </div>
+            </div>
+          </div>
+
+          <div class="nhsuk-grid-row" style="margin-top: 8px;">
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="admin-staff-contact" style="color: var(--text-color);">Contact Extension / Phone</label>
+                <input class="nhsuk-input" id="admin-staff-contact" type="text" value="Ext. 4201" placeholder="Ext. 4201">
+              </div>
+            </div>
+            <div class="nhsuk-grid-column-one-half">
+              <div class="nhsuk-form-group">
+                <label class="nhsuk-label" for="admin-staff-skills" style="color: var(--text-color);">Specialized Competencies & Tags (comma separated)</label>
+                <input class="nhsuk-input" id="admin-staff-skills" type="text" placeholder="e.g. Independent Prescriber, Minor Ailments">
+              </div>
+            </div>
+          </div>
+
+          <h3 class="nhsuk-heading-m" style="margin-top: 16px; color: var(--text-color);">Weekly Shift Allocations</h3>
+          <div id="days-editor-container"></div>
+
+          <div style="display: flex; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+            <button class="nhsuk-button" type="submit" id="admin-save-btn">Save Staff Rota</button>
+            <button class="nhsuk-button nhsuk-button--secondary" type="button" onclick="resetAdminForm()">Reset / Add New</button>
+            <button class="nhsuk-button nhsuk-button--secondary" type="button" id="admin-email-btn" onclick="emailStaffRota()" style="display: none; background-color: var(--card-bg); color: #005ea5; border: 2px solid #005ea5;">✉️ Email Rota to Staff</button>
+          </div>
+        </form>
+      </div>
+
+    </div>
+
+  </main>
+
+  <footer role="contentinfo">
+    <div class="nhsuk-footer" id="nhsuk-footer" style="border-top: 1px solid var(--border-color);">
+      <div class="nhsuk-width-container">
+        <ul class="nhsuk-footer__list">
+          <li class="nhsuk-footer__list-item"><a class="nhsuk-footer__list-item-link" href="https://service-manual.nhs.uk/" target="_blank">Design Guidelines (NHS Service Manual)</a></li>
+        </ul>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript Logic -->
+  <script>
+    const SITES_LIST = [
+      'Oakwood Surgery - Main Site',
+      'Oakwood - St. Jude\'s Branch',
+      'Riverview Medical Centre',
+      'Riverview - Northside Clinic',
+      'Meadow Health Centre',
+      'Crossroads Practice',
+      'Annual Leave',
+      'Cover Needed'
+    ];
+
+    const DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+    // ARRS Maximum Reimbursable Bandings (Annual Cap per 1.0 WTE benchmark example)
+    const ARRS_REIMBURSEMENT_CAPS = {
+      'Clinical Pharmacist': { maxCap: 58000, targetWte: 2.0 },
+      'First Contact Physio': { maxCap: 55000, targetWte: 2.0 },
+      'Care Coordinator': { maxCap: 31000, targetWte: 3.0 },
+      'Social Prescriber': { maxCap: 31000, targetWte: 2.0 },
+      'GP Assistant': { maxCap: 29000, targetWte: 2.0 }
+    };
+
+    let ROOMS_LIST = ['-'];
+    for (let i = 1; i <= 20; i++) {
+      ROOMS_LIST.push(`Room ${i}`);
+    }
+    ROOMS_LIST.push('Admin Suite 1', 'Admin Suite 2', 'Physio Suite 1', 'Consult Room 1');
+
+    let ROTA_DATA = [
+      {
+        id: '1',
+        name: 'Gemma Taylor',
+        role: 'Care Coordinator',
+        wte: 1.0,
+        contact: 'Ext. 4201',
+        skills: ['Care Planning', 'Frailty Champion', 'MDT Co-ordinator'],
+        schedule: {
+          Mon: { practice: 'Oakwood Surgery - Main Site', room: 'Admin Suite 2', time: '08:30 - 16:30' },
+          Tue: { practice: 'Oakwood - St. Jude\'s Branch', room: 'Room 2', time: '08:30 - 16:30' },
+          Wed: { practice: 'Riverview - Northside Clinic', room: 'Room 1', time: '09:00 - 17:00' },
+          Thu: { practice: 'Oakwood Surgery - Main Site', room: 'Admin Suite 2', time: '08:30 - 16:30' },
+          Fri: { practice: 'Meadow Health Centre', room: 'Room 4', time: '08:30 - 13:00' }
+        }
+      },
+      {
+        id: '2',
+        name: 'Dr. Aisha Khan',
+        role: 'Clinical Pharmacist',
+        wte: 1.0,
+        contact: 'Ext. 4202',
+        skills: ['Independent Prescriber', 'Structured Medication Reviews', 'Polypharmacy'],
+        schedule: {
+          Mon: { practice: 'Oakwood Surgery - Main Site', room: 'Room 3', time: '08:30 - 16:30' },
+          Tue: { practice: 'Oakwood Surgery - Main Site', room: 'Room 3', time: '08:30 - 16:30' },
+          Wed: { practice: 'Meadow Health Centre', room: 'Room 1', time: '09:00 - 17:00' },
+          Thu: { practice: 'Riverview Medical Centre', room: 'Room 5', time: '08:30 - 16:30' },
+          Fri: { practice: 'Crossroads Practice', room: 'Room 2', time: '08:30 - 13:00' }
+        }
+      },
+      {
+        id: '3',
+        name: 'David Chen',
+        role: 'First Contact Physio',
+        wte: 1.0,
+        contact: 'Ext. 4203',
+        skills: ['MSK Specialist', 'Injection Therapy', 'First Contact Triage'],
+        schedule: {
+          Mon: { practice: 'Riverview Medical Centre', room: 'Physio Suite 1', time: '08:00 - 16:00' },
+          Tue: { practice: 'Riverview - Northside Clinic', room: 'Room 5', time: '08:00 - 16:00' },
+          Wed: { practice: 'Oakwood Surgery - Main Site', room: 'Room 4', time: '08:00 - 16:00' },
+          Thu: { practice: 'Meadow Health Centre', room: 'Room 2', time: '08:30 - 16:30' },
+          Fri: { practice: 'Annual Leave', room: '-', time: '-' }
+        }
+      },
+      {
+        id: '4',
+        name: 'Sarah Johnson',
+        role: 'Social Prescriber',
+        wte: 1.0,
+        contact: 'Ext. 4204',
+        skills: ['Mental Health First Aid', 'Welfare & Benefits', 'Community Link'],
+        schedule: {
+          Mon: { practice: 'Crossroads Practice', room: 'Consult Room 1', time: '09:00 - 17:00' },
+          Tue: { practice: 'Meadow Health Centre', room: 'Room 1', time: '09:00 - 17:00' },
+          Wed: { practice: 'Cover Needed', room: '-', time: '-' },
+          Thu: { practice: 'Oakwood - St. Jude\'s Branch', room: 'Room 1', time: '09:00 - 17:00' },
+          Fri: { practice: 'Oakwood Surgery - Main Site', room: 'Room 6', time: '09:00 - 17:00' }
+        }
+      }
+    ];
+
+    let currentEditingId = null;
+
+    function toggleDarkMode() {
+      const root = document.getElementById('html-root');
+      const btn = document.getElementById('dark-mode-btn');
+      if (root.getAttribute('data-theme') === 'dark') {
+        root.removeAttribute('data-theme');
+        btn.innerText = '🌙 Dark Mode';
+      } else {
+        root.setAttribute('data-theme', 'dark');
+        btn.innerText = '☀️ Light Mode';
+      }
+    }
+
+    function switchUserRole() {
+      const role = document.getElementById('user-role-select').value;
+      const adminBtn = document.getElementById('tab-btn-admin');
+      const kpiReimbCard = document.getElementById('kpi-card-reimbursement');
+
+      if (role === 'manager') {
+        adminBtn.style.display = 'inline-block';
+        kpiReimbCard.style.display = 'block';
+      } else {
+        adminBtn.style.display = 'none';
+        kpiReimbCard.style.display = 'none';
+        // If viewing admin tab when switching to standard, bump back to view tab
+        const adminSec = document.getElementById('admin-section');
+        if (adminSec.style.display === 'block') {
+          switchTab('view');
+        }
+      }
+    }
+
+    function switchTab(tab) {
+      const viewSec = document.getElementById('view-section');
+      const receptionSec = document.getElementById('reception-section');
+      const directorySec = document.getElementById('directory-section');
+      const masterSec = document.getElementById('master-section');
+      const adminSec = document.getElementById('admin-section');
+
+      const btnView = document.getElementById('tab-btn-view');
+      const btnReception = document.getElementById('tab-btn-reception');
+      const btnDirectory = document.getElementById('tab-btn-directory');
+      const btnMaster = document.getElementById('tab-btn-master');
+      const btnAdmin = document.getElementById('tab-btn-admin');
+
+      viewSec.style.display = 'none';
+      receptionSec.style.display = 'none';
+      directorySec.style.display = 'none';
+      masterSec.style.display = 'none';
+      adminSec.style.display = 'none';
+
+      btnView.className = 'nhsuk-button nhsuk-button--secondary';
+      btnReception.className = 'nhsuk-button nhsuk-button--secondary';
+      btnDirectory.className = 'nhsuk-button nhsuk-button--secondary';
+      btnMaster.className = 'nhsuk-button nhsuk-button--secondary';
+      btnAdmin.className = 'nhsuk-button nhsuk-button--secondary';
+
+      if (tab === 'view') {
+        viewSec.style.display = 'block';
+        btnView.className = 'nhsuk-button';
+      } else if (tab === 'reception') {
+        receptionSec.style.display = 'block';
+        btnReception.className = 'nhsuk-button';
+        runReceptionRouting();
+      } else if (tab === 'directory') {
+        directorySec.style.display = 'block';
+        btnDirectory.className = 'nhsuk-button';
+        renderDirectory();
+      } else if (tab === 'master') {
+        masterSec.style.display = 'block';
+        btnMaster.className = 'nhsuk-button';
+        renderMasterBook();
+      } else if (tab === 'admin') {
+        const role = document.getElementById('user-role-select').value;
+        if (role !== 'manager') {
+          alert('Access Denied: Management credentials required.');
+          switchTab('view');
+          return;
+        }
+        adminSec.style.display = 'block';
+        btnAdmin.className = 'nhsuk-button';
+        renderAnalytics();
+        updateAdminSelectDropdown();
+      }
+    }
+
+    function renderTable(data) {
+      const tbody = document.getElementById('table-body');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = `
+          <tr class="nhsuk-table__row">
+            <td colspan="7" class="nhsuk-table__cell" style="text-align: center; padding: 24px; color: var(--muted-color);">
+              No matching rotation shifts found for the selected site or role filter.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      data.forEach(staff => {
+        const row = document.createElement('tr');
+        row.className = 'nhsuk-table__row';
+
+        let skillsHtml = (staff.skills || []).map(sk => `<span class="badge-skill">${sk}</span>`).join(' ');
+
+        let daysHtml = '';
+        DAYS.forEach(day => {
+          const shift = staff.schedule[day] || { practice: 'Annual Leave', room: '-', time: '-' };
+          if (shift.practice === 'Annual Leave') {
+            daysHtml += `<td class="nhsuk-table__cell"><span class="badge-leave">Annual Leave</span></td>`;
+          } else if (shift.practice === 'Cover Needed') {
+            daysHtml += `
+              <td class="nhsuk-table__cell">
+                <span class="badge-cover">⚠️ Cover Needed</span><br>
+                <button class="nhsuk-button nhsuk-button--secondary" style="padding: 2px 6px; font-size: 11px; margin: 4px 0 0 0;" onclick="openCoverManager('${staff.id}', '${day}')">Find Cover</button>
+              </td>
+            `;
+          } else {
+            daysHtml += `
+              <td class="nhsuk-table__cell">
+                <strong>${shift.practice}</strong><br>
+                <span class="badge-room">${shift.room}</span><br>
+                <small style="color: var(--muted-color);">${shift.time}</small>
+              </td>
+            `;
+          }
+        });
+
+        const role = document.getElementById('user-role-select').value;
+        let actionButtonsHtml = `
+          <div class="export-dropdown">
+            <button class="nhsuk-button nhsuk-button--secondary" style="padding: 4px 10px; font-size: 12px; margin: 0 0 4px 0;">Export ▾</button>
+            <div class="export-content">
+              <button onclick="exportFormat('${staff.id}', 'ics')">📅 iCal (.ics)</button>
+              <button onclick="exportFormat('${staff.id}', 'csv')">📊 CSV File</button>
+              <button onclick="exportFormat('${staff.id}', 'pdf')">🖨️ PDF / Print</button>
+              <button onclick="exportFormat('${staff.id}', 'rtf')">📄 Rich Text (.rtf)</button>
+            </div>
+          </div>
+        `;
+        if (role === 'manager') {
+          actionButtonsHtml += `<button class="nhsuk-button nhsuk-button--secondary" style="padding: 4px 10px; font-size: 12px; margin: 0;" onclick="editStaffFromTable('${staff.id}')">Edit</button>`;
+        }
+
+        row.innerHTML = `
+          <td class="nhsuk-table__cell">
+            <strong>${staff.name}</strong><br>
+            <span style="font-size: 13px; color: var(--muted-color);">${staff.role} (${staff.wte} WTE)</span><br>
+            <div>${skillsHtml}</div>
+          </td>
+          ${daysHtml}
+          <td class="nhsuk-table__cell">${actionButtonsHtml}</td>
+        `;
+
+        tbody.appendChild(row);
+      });
+
+      updateKPIs(data);
+    }
+
+    function openCoverManager(staffId, day) {
+      const role = document.getElementById('user-role-select').value;
+      if (role !== 'manager') {
+        alert('Permission Denied: Only management can assign shift cover.');
+        return;
+      }
+
+      const staff = ROTA_DATA.find(s => s.id === staffId);
+      if (!staff) return;
+
+      const fullDayName = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday' }[day];
+      const availableColleagues = ROTA_DATA.filter(colleague => {
+        if (colleague.id === staffId) return false;
+        const shift = colleague.schedule[day];
+        return (!shift || shift.practice === 'Annual Leave' || shift.practice === 'Cover Needed');
+      });
+
+      let promptMsg = `Cover Request for ${staff.name} (${staff.role}) on ${fullDayName}.\n\nAvailable Clinicians to Assign Cover:\n`;
+      if (availableColleagues.length === 0) {
+        promptMsg += `No free clinicians found on ${fullDayName}.\n`;
+      } else {
+        availableColleagues.forEach((c, idx) => {
+          promptMsg += `${idx + 1}. ${c.name} (${c.role})\n`;
+        });
+      }
+
+      const assignedName = prompt(`${promptMsg}\nEnter exact clinician name to assign cover, or leave blank to cancel:`, "");
+      if (assignedName && assignedName.trim() !== "") {
+        const foundColleague = ROTA_DATA.find(c => c.name.toLowerCase() === assignedName.trim().toLowerCase());
+        if (foundColleague) {
+          foundColleague.schedule[day] = {
+            practice: staff.schedule[day].intendedPractice || 'Oakwood Surgery - Main Site',
+            room: 'Room 1',
+            time: '08:30 - 16:30'
+          };
+          staff.schedule[day] = { practice: 'Annual Leave', room: '-', time: '-' };
+          filterTable();
+          logAuditTrail(`Assigned cover for ${staff.name} on ${fullDayName} to ${foundColleague.name}`);
+          alert(`Successfully assigned cover to ${foundColleague.name}!`);
+        } else {
+          alert('Clinician name not found.');
+        }
+      }
+    }
+
+    function renderDirectory() {
+      const tbody = document.getElementById('directory-tbody');
+      tbody.innerHTML = '';
+
+      ROTA_DATA.forEach(staff => {
+        const row = document.createElement('tr');
+        row.className = 'nhsuk-table__row';
+        row.innerHTML = `
+          <td class="nhsuk-table__cell"><strong>${staff.name}</strong></td>
+          <td class="nhsuk-table__cell">${staff.role}</td>
+          <td class="nhsuk-table__cell">Oakwood Surgery - Main Site</td>
+          <td class="nhsuk-table__cell">${staff.contact || 'Ext. 4200'}</td>
+          <td class="nhsuk-table__cell">
+            <a class="nhsuk-button nhsuk-button--secondary" style="padding: 4px 10px; font-size: 12px; margin: 0; text-decoration: none;" href="msteams://chat/0/0?users=${encodeURIComponent(staff.name.toLowerCase().replace(/\s+/g, '.'))}&topicname=${encodeURIComponent('PCN Rota Inquiry - ' + staff.name)}">💬 Open Teams Chat</a>
+          </td>
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function calculateMileageClaim() {
+      const staffName = document.getElementById('mileage-staff').value;
+      const miles = parseFloat(document.getElementById('mileage-miles').value) || 0;
+      const claimAmount = miles * 0.56;
+
+      const resultBox = document.getElementById('mileage-result-box');
+      resultBox.innerHTML = `Calculated Mileage Expense for ${staffName}: £${claimAmount.toFixed(2)} (${miles} miles @ £0.56/mi).<br><span style="color: #007f3b; font-size: 13px;">✓ Verified against Employee Arrangement contract policy.</span>`;
+      logAuditTrail(`Calculated mileage expenses for ${staffName}: £${claimAmount.toFixed(2)} (${miles} miles)`);
+    }
+
+    function calculateOvertimeClaim() {
+      const staffName = document.getElementById('overtime-staff').value;
+      const hours = parseFloat(document.getElementById('overtime-hours').value) || 0;
+      const type = document.getElementById('overtime-type').value;
+
+      let hourlyRateEstimate = 18.50; // standard benchmark hourly rate
+      let multiplier = type === 'BankHoliday20' ? 2.0 : (type === 'Overtime15' ? 1.5 : 0);
+      let totalPay = hours * hourlyRateEstimate * multiplier;
+
+      const resultBox = document.getElementById('overtime-result-box');
+      if (type === 'TOIL') {
+        resultBox.innerHTML = `Overtime logged for ${staffName}: <strong>${hours} hours banked as TOIL (Time Off In Lieu)</strong>.`;
+        logAuditTrail(`Logged ${hours} hours TOIL for ${staffName}`);
+      } else {
+        resultBox.innerHTML = `Overtime claim processed for ${staffName}: <strong>£${totalPay.toFixed(2)}</strong> (${hours} hrs @ £${(hourlyRateEstimate * multiplier).toFixed(2)}/hr rate).`;
+        logAuditTrail(`Processed overtime claim for ${staffName}: £${totalPay.toFixed(2)} (${hours} hrs)`);
+      }
+    }
+
+    function logAuditTrail(message) {
+      const container = document.getElementById('audit-log-container');
+      const now = new Date();
+      const timestamp = now.toISOString().slice(0, 19).replace('T', ' ');
+      container.innerHTML = `[${timestamp}] ${message}<br>` + container.innerHTML;
+    }
+
+    function renderAnalytics() {
+      const roleCounts = {};
+      const leaveCounts = { Mon: 0, Tue: 0, Wed: 0, Thu: 0, Fri: 0 };
+      const totalStaffCount = ROTA_DATA.length;
+
+      ROTA_DATA.forEach(staff => {
+        roleCounts[staff.role] = (roleCounts[staff.role] || 0) + 5;
+        DAYS.forEach(day => {
+          const shift = staff.schedule[day];
+          if (shift && shift.practice === 'Annual Leave') {
+            leaveCounts[day]++;
+          }
+        });
+      });
+
+      const rolesContainer = document.getElementById('analytics-roles-container');
+      rolesContainer.innerHTML = '';
+      Object.entries(roleCounts).forEach(([role, shifts]) => {
+        rolesContainer.innerHTML += `
+          <div>
+            <div style="display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 4px;">
+              <span><strong>${role}</strong></span>
+              <span>${shifts} shift slots/wk</span>
+            </div>
+            <div style="background: var(--border-color); border-radius: 4px; height: 10px; width: 100%;">
+              <div style="background: #005ea5; height: 10px; border-radius: 4px; width: ${Math.min(100, shifts * 5)}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      const leaveContainer = document.getElementById('analytics-leave-container');
+      leaveContainer.innerHTML = '';
+      const fullDayNames = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday' };
+      
+      DAYS.forEach(day => {
+        const count = leaveCounts[day];
+        const leavePercentage = totalStaffCount > 0 ? (count / totalStaffCount) * 100 : 0;
+        const isClashing = leavePercentage >= 30;
+        const color = isClashing ? '#d9381e' : '#007f3b';
+        
+        leaveContainer.innerHTML += `
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; background: var(--bg-color); padding: 8px; border-radius: 4px; border: 1px solid var(--border-color);">
+            <span><strong>${fullDayNames[day]}</strong> (${count} staff off — ${leavePercentage.toFixed(0)}%)</span>
+            <span><span style="color: ${color}; font-weight: bold;">${isClashing ? '⚠️ 30% Threshold Exceeded!' : '✓ Safe'}</span></span>
+          </div>
+        `;
+      });
+
+      const financeContainer = document.getElementById('finance-tracker-container');
+      financeContainer.innerHTML = '';
+      
+      let totalClaimedEstimate = 0;
+
+      Object.entries(ARRS_REIMBURSEMENT_CAPS).forEach(([roleName, info]) => {
+        const activeStaffInRole = ROTA_DATA.filter(s => s.role === roleName);
+        const currentWte = activeStaffInRole.reduce((sum, s) => sum + (s.wte || 1.0), 0);
+        const estimatedClaim = currentWte * info.maxCap;
+
+        totalClaimedEstimate += estimatedClaim;
+
+        financeContainer.innerHTML += `
+          <div style="font-size: 13px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 2px;">
+              <span><strong>${roleName}</strong> (${currentWte} WTE active vs ${info.targetWte} WTE cap)</span>
+              <span>£${estimatedClaim.toLocaleString()} / £${(info.targetWte * info.maxCap).toLocaleString()}</span>
+            </div>
+            <div style="background: var(--border-color); border-radius: 4px; height: 8px; width: 100%;">
+              <div style="background: #007f3b; height: 8px; border-radius: 4px; width: ${Math.min(100, (currentWte / info.targetWte) * 100)}%;"></div>
+            </div>
+          </div>
+        `;
+      });
+
+      document.getElementById('kpi-reimbursement').innerText = `£${Math.round(totalClaimedEstimate / 1000)}k`;
+    }
+
+    function runReceptionRouting() {
+      const category = document.getElementById('routing-category').value;
+      const day = document.getElementById('routing-day').value;
+      const fullDayName = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday' }[day];
+      
+      let targetRole = '';
+      let advice = '';
+
+      if (category === 'MSK') {
+        targetRole = 'First Contact Physio';
+        advice = 'Direct booking appropriate for soft tissue injuries, sprains, back or joint pain without red flags.';
+      } else if (category === 'Medication') {
+        targetRole = 'Clinical Pharmacist';
+        advice = 'Suitable for medication reviews, queries about side effects, or repeat prescription synchronisation.';
+      } else if (category === 'Social') {
+        targetRole = 'Social Prescriber';
+        advice = 'Ideal for patients needing non-clinical support with social isolation, housing, debt, or lifestyle wellbeing.';
+      } else if (category === 'CareCoord') {
+        targetRole = 'Care Coordinator';
+        advice = 'Recommended for coordinating complex multi-agency care, frail elderly support, and care plan management.';
+      } else if (category === 'GPAsst') {
+        targetRole = 'GP Assistant';
+        advice = 'Helps streamline administrative queries, clinic preparation, or follow-ups for diagnostic results.';
+      }
+
+      const availableClinicians = ROTA_DATA.filter(staff => {
+        if (staff.role !== targetRole) return false;
+        const shift = staff.schedule[day];
+        return shift && shift.practice !== 'Annual Leave' && shift.practice !== 'Cover Needed';
+      });
+
+      const resultBox = document.getElementById('routing-result-box');
+      let clinicianHtml = '';
+
+      if (availableClinicians.length === 0) {
+        clinicianHtml = `<p style="color: #d9381e; font-weight: bold; margin: 8px 0 0 0;">⚠️ No ${targetRole} is currently on duty/onsite on ${fullDayName}. Consider booking into another day or escalating to standard GP triage.</p>`;
+      } else {
+        clinicianHtml = `<p style="color: #007f3b; font-weight: bold; margin: 8px 0 4px 0;">✓ Available on ${fullDayName}:</p><ul style="margin: 0; padding-left: 20px;">`;
+        availableClinicians.forEach(c => {
+          const shift = c.schedule[day];
+          clinicianHtml += `<li><strong>${c.name}</strong> at <em>${shift.practice}</em> (${shift.room}, ${shift.time})</li>`;
+        });
+        clinicianHtml += `</ul>`;
+      }
+
+      resultBox.innerHTML = `
+        <h3 class="nhsuk-heading-s" style="color: #005ea5; margin-top: 0;">Recommended Route: ${targetRole}</h3>
+        <p class="nhsuk-body-m" style="margin-bottom: 8px;">${advice}</p>
+        <hr class="nhsuk-section-break nhsuk-section-break--s nhsuk-section-break--visible">
+        ${clinicianHtml}
+      `;
+    }
+
+    function renderMasterBook() {
+      const tbody = document.getElementById('master-book-tbody');
+      tbody.innerHTML = '';
+
+      ROTA_DATA.forEach(staff => {
+        const row = document.createElement('tr');
+        row.className = 'nhsuk-table__row';
+        let daysHtml = '';
+        DAYS.forEach(day => {
+          const shift = staff.schedule[day] || { practice: 'Annual Leave', room: '-', time: '-' };
+          if (shift.practice === 'Annual Leave') {
+            daysHtml += `<td class="nhsuk-table__cell"><span style="color: #007f3b; font-weight: bold;">Leave</span></td>`;
+          } else if (shift.practice === 'Cover Needed') {
+            daysHtml += `<td class="nhsuk-table__cell"><span style="color: #856404; font-weight: bold;">Cover Needed</span></td>`;
+          } else {
+            daysHtml += `<td class="nhsuk-table__cell">${shift.practice}<br><small>${shift.room}</small></td>`;
+          }
+        });
+
+        row.innerHTML = `
+          <td class="nhsuk-table__cell"><strong>${staff.name}</strong></td>
+          <td class="nhsuk-table__cell">${staff.role}</td>
+          ${daysHtml}
+        `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function updateKPIs(data) {
+      document.getElementById('kpi-staff').innerText = data.length;
+      let totalAssignedShifts = 0;
+      data.forEach(staff => {
+        DAYS.forEach(day => {
+          if (staff.schedule[day] && staff.schedule[day].practice !== 'Annual Leave' && staff.schedule[day].practice !== 'Cover Needed') {
+            totalAssignedShifts++;
+          }
+        });
+      });
+      const maxSlots = data.length * 5;
+      const utilPercent = maxSlots > 0 ? Math.round((totalAssignedShifts / maxSlots) * 100) : 0;
+      document.getElementById('kpi-rooms').innerText = `${totalAssignedShifts} / ${maxSlots}`;
+      document.getElementById('kpi-util').innerText = `${utilPercent}%`;
+    }
+
+    function filterTable() {
+      const selectedPractice = document.getElementById('filter-practice').value;
+      const selectedRole = document.getElementById('filter-role').value;
+      const weekSelectText = document.getElementById('filter-week').options[document.getElementById('filter-week').selectedIndex].text;
+      
+      document.getElementById('current-week-tag').innerText = weekSelectText;
+
+      const filtered = ROTA_DATA.filter(staff => {
+        const matchesRole = selectedRole === 'All' || staff.role === selectedRole;
+        const matchesPractice = selectedPractice === 'All' || 
+          Object.values(staff.schedule).some(s => s.practice === selectedPractice);
+        return matchesRole && matchesPractice;
+      });
+
+      renderTable(filtered);
+    }
+
+    function exportFormat(staffId, format) {
+      const staff = ROTA_DATA.find(s => s.id === staffId);
+      if (!staff) return;
+
+      const weekText = document.getElementById('current-week-tag').innerText;
+
+      if (format === 'ics') {
+        let icsContent = `BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Primary Care Rota Tracker Demo//EN\nCALSCALE:GREGORIAN\n`;
+        Object.entries(staff.schedule).forEach(([day, shift]) => {
+          if (shift.practice !== 'Annual Leave' && shift.practice !== 'Cover Needed' && shift.practice !== '-') {
+            icsContent += `BEGIN:VEVENT\nSUMMARY:ARRS Shift - ${shift.practice} (${shift.room})\nDESCRIPTION:Role: ${staff.role}\\n${weekText}\nLOCATION:${shift.practice}, ${shift.room}\nEND:VEVENT\n`;
+          }
+        });
+        icsContent += `END:VCALENDAR`;
+        downloadBlob(icsContent, `${staff.name.replace(/\s+/g, '_')}_Rota.ics`, 'text/calendar;charset=utf-8');
+      } 
+      else if (format === 'csv') {
+        let csvContent = `Staff Name,Role,Week,Day,Practice/Site,Room/Suite,Hours\n`;
+        Object.entries(staff.schedule).forEach(([day, shift]) => {
+          csvContent += `"${staff.name}","${staff.role}","${weekText}","${day}","${shift.practice}","${shift.room}","${shift.time}"\n`;
+        });
+        downloadBlob(csvContent, `${staff.name.replace(/\s+/g, '_')}_Rota.csv`, 'text/csv;charset=utf-8');
+      }
+      else if (format === 'rtf') {
+        let rtfContent = `{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Arial;}}\n`;
+        rtfContent += `\\f0\\fs28 \\b Primary Care Network - Staff Rota\\b0\\fs20\\par\n`;
+        rtfContent += `\\b Clinician:\\b0 ${staff.name}  |  \\b Role:\\b0 ${staff.role}\\par\n`;
+        rtfContent += `\\b Period:\\b0 ${weekText}\\par\\pard\\sa200\\sl276\\slmult1\\par\n`;
+        
+        Object.entries(staff.schedule).forEach(([day, shift]) => {
+          rtfContent += `\\b ${day}:\\b0 ${shift.practice} — Room: ${shift.room} (${shift.time})\\par\n`;
+        });
+        rtfContent += `}`;
+        downloadBlob(rtfContent, `${staff.name.replace(/\s+/g, '_')}_Rota.rtf`, 'application/rtf;charset=utf-8');
+      }
+      else if (format === 'pdf') {
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(`
+          <html>
+          <head>
+            <title>${staff.name} - Rota (${weekText})</title>
+            <style>
+              body { font-family: Arial, sans-serif; padding: 20px; color: #212b32; }
+              h1 { color: #005ea5; margin-bottom: 4px; }
+              table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+              th, td { border: 1px solid #d8dde0; padding: 10px; text-align: left; font-size: 14px; }
+              th { background-color: #f0f4f5; }
+            </style>
+          </head>
+          <body onload="window.print(); window.close();">
+            <h1>Primary Care Network Rota</h1>
+            <p><strong>Clinician:</strong> ${staff.name} | <strong>Role:</strong> ${staff.role}</p>
+            <p><strong>Period:</strong> ${weekText}</p>
+            <table>
+              <tr><th>Day</th><th>Practice / Site</th><th>Room / Suite</th><th>Hours</th></tr>
+              ${Object.entries(staff.schedule).map(([day, shift]) => `<tr><td><strong>${day}</strong></td><td>${shift.practice}</td><td>${shift.room}</td><td>${shift.time}</td></tr>`).join('')}
+            </table>
+          </body>
+          </html>
+        `);
+        printWindow.document.close();
+      }
+      logAuditTrail(`Exported rota format (${format}) for ${staff.name}`);
+    }
+
+    function downloadBlob(content, filename, mimeType) {
+      const blob = new Blob([content], { type: mimeType });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', filename);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+
+    function emailStaffRota() {
+      if (!currentEditingId) return;
+      const staff = ROTA_DATA.find(s => s.id === currentEditingId);
+      if (!staff) return;
+
+      const weekText = document.getElementById('current-week-tag').innerText;
+      const subject = encodeURIComponent(`Your Weekly Rota - ${staff.name} (${weekText})`);
+      
+      let bodyText = `Hi ${staff.name},\n\nHere is your confirmed schedule for ${weekText}:\n\n`;
+      DAYS.forEach(day => {
+        const shift = staff.schedule[day] || { practice: 'Annual Leave', room: '-', time: '-' };
+        if (shift.practice === 'Annual Leave') {
+          bodyText += `${day}: Annual Leave\n`;
+        } else if (shift.practice === 'Cover Needed') {
+          bodyText += `${day}: Cover Needed\n`;
+        } else {
+          bodyText += `${day}: ${shift.practice} | Room: ${shift.room} | Hours: ${shift.time}\n`;
+        }
+      });
+      bodyText += `\nPlease let the operations team know if you have any questions.\n\nBest regards,\nPCN Rota Management`;
+
+      const mailtoLink = `mailto:?subject=${subject}&body=${encodeURIComponent(bodyText)}`;
+      logAuditTrail(`Emailed rota confirmation to ${staff.name}`);
+      window.location.href = mailtoLink;
+    }
+
+    function handleBulkCsvUpload() {
+      const fileInput = document.getElementById('csv-file-input');
+      if (!fileInput.files || fileInput.files.length === 0) {
+        alert('Please select a CSV file to upload first.');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        const text = e.target.result;
+        const lines = text.split(/\r\n|\n/);
+        let importedCount = 0;
+
+        lines.forEach((line, index) => {
+          if (index === 0 || !line.trim()) return;
+          const cols = line.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+          if (cols.length >= 6) {
+            const [name, role, day, practice, room, time] = cols;
+            let staff = ROTA_DATA.find(s => s.name.toLowerCase() === name.toLowerCase());
+            
+            if (!staff) {
+              staff = {
+                id: String(Date.now() + Math.random()),
+                name: name,
+                role: role || 'Care Coordinator',
+                wte: 1.0,
+                contact: 'Ext. 4205',
+                skills: [],
+                schedule: {
+                  Mon: { practice: 'Annual Leave', room: '-', time: '-' },
+                  Tue: { practice: 'Annual Leave', room: '-', time: '-' },
+                  Wed: { practice: 'Annual Leave', room: '-', time: '-' },
+                  Thu: { practice: 'Annual Leave', room: '-', time: '-' },
+                  Fri: { practice: 'Annual Leave', room: '-', time: '-' }
+                }
+              };
+              ROTA_DATA.push(staff);
+            }
+
+            if (DAYS.includes(day)) {
+              staff.schedule[day] = { practice, room, time };
+              importedCount++;
+            }
+          }
+        });
+
+        filterTable();
+        switchTab('view');
+        logAuditTrail(`Completed bulk CSV rota import (${importedCount} shift records processed)`);
+        alert(`Successfully imported/updated Rota records! (${importedCount} shift entries processed)`);
+        fileInput.value = '';
+      };
+
+      reader.readAsText(file);
+    }
+
+    function buildAdminDayEditors() {
+      const container = document.getElementById('days-editor-container');
+      container.innerHTML = '';
+
+      DAYS.forEach(day => {
+        const fullDayName = { Mon: 'Monday', Tue: 'Tuesday', Wed: 'Wednesday', Thu: 'Thursday', Fri: 'Friday' }[day];
+        let siteOptionsHtml = SITES_LIST.map(site => `<option value="${site}">${site}</option>`).join('');
+        let roomOptionsHtml = ROOMS_LIST.map(room => `<option value="${room}">${room}</option>`).join('');
+
+        const dayBox = document.createElement('div');
+        dayBox.className = 'day-editor-box';
+        dayBox.innerHTML = `
+          <strong style="color: #005ea5; font-size: 16px;">${fullDayName}</strong>
+          <div class="nhsuk-grid-row" style="margin-top: 8px;">
+            <div class="nhsuk-grid-column-one-third">
+              <label class="nhsuk-label" style="font-size: 13px; color: var(--text-color);">Site / Practice</label>
+              <select class="nhsuk-select" id="admin-site-${day}" onchange="validateRealTimeClashes()">${siteOptionsHtml}</select>
+            </div>
+            <div class="nhsuk-grid-column-one-third">
+              <label class="nhsuk-label" style="font-size: 13px; color: var(--text-color);">Room / Suite (1 - 20)</label>
+              <select class="nhsuk-select" id="admin-room-${day}" onchange="validateRealTimeClashes()">${roomOptionsHtml}</select>
+            </div>
+            <div class="nhsuk-grid-column-one-third">
+              <label class="nhsuk-label" style="font-size: 13px; color: var(--text-color);">Working Hours</label>
+              <input class="nhsuk-input" id="admin-time-${day}" type="text" placeholder="08:30 - 16:30">
+            </div>
+          </div>
+        `;
+        container.appendChild(dayBox);
+      });
+    }
+
+    function validateRealTimeClashes() {
+      const warningBanner = document.getElementById('clash-warning-banner');
+      const warningText = document.getElementById('clash-warning-text');
+
+      let clashFound = false;
+      let clashMessage = '';
+
+      DAYS.forEach(day => {
+        const site = document.getElementById(`admin-site-${day}`).value;
+        const room = document.getElementById(`admin-room-${day}`).value;
+
+        if (site !== 'Annual Leave' && site !== 'Cover Needed' && room !== '-' && room !== '') {
+          ROTA_DATA.forEach(otherStaff => {
+            if (otherStaff.id === currentEditingId) return;
+            const otherShift = otherStaff.schedule[day];
+            if (otherShift && otherShift.practice === site && otherShift.room === room) {
+              clashFound = true;
+              clashMessage = `Double Booking: "${room}" at ${site} on ${day} is already booked by ${otherStaff.name}.`;
+            }
+          });
+        }
+      });
+
+      if (clashFound) {
+        warningText.innerText = clashMessage;
+        warningBanner.style.display = 'block';
+      } else {
+        warningBanner.style.display = 'none';
+      }
+    }
+
+    function updateAdminSelectDropdown() {
+      const select = document.getElementById('admin-select-staff');
+      select.innerHTML = '<option value="NEW">-- Add New Staff Member --</option>';
+      ROTA_DATA.forEach(staff => {
+        const option = document.createElement('option');
+        option.value = staff.id;
+        option.textContent = `${staff.name} (${staff.role})`;
+        select.appendChild(option);
+      });
+      select.value = currentEditingId ? currentEditingId : 'NEW';
+    }
+
+    function loadStaffIntoAdminForm() {
+      const selectVal = document.getElementById('admin-select-staff').value;
+      const emailBtn = document.getElementById('admin-email-btn');
+
+      if (selectVal === 'NEW') {
+        resetAdminForm();
+        emailBtn.style.display = 'none';
+        return;
+      }
+
+      emailBtn.style.display = 'inline-block';
+      const staff = ROTA_DATA.find(s => s.id === selectVal);
+      if (!staff) return;
+
+      currentEditingId = staff.id;
+      document.getElementById('admin-form-title').innerText = `Update Rota: ${staff.name}`;
+      document.getElementById('admin-staff-name').value = staff.name;
+      document.getElementById('admin-staff-role').value = staff.role;
+      document.getElementById('admin-staff-wte').value = staff.wte || 1.0;
+      document.getElementById('admin-staff-contact').value = staff.contact || 'Ext. 4200';
+      document.getElementById('admin-staff-skills').value = (staff.skills || []).join(', ');
+
+      DAYS.forEach(day => {
+        const shift = staff.schedule[day] || { practice: 'Annual Leave', room: '-', time: '-' };
+        document.getElementById(`admin-site-${day}`).value = shift.practice;
+        document.getElementById(`admin-room-${day}`).value = shift.room;
+        document.getElementById(`admin-time-${day}`).value = shift.time;
+      });
+
+      validateRealTimeClashes();
+    }
+
+    function editStaffFromTable(staffId) {
+      currentEditingId = staffId;
+      switchTab('admin');
+      document.getElementById('admin-select-staff').value = staffId;
+      loadStaffIntoAdminForm();
+    }
+
+    function resetAdminForm() {
+      currentEditingId = null;
+      document.getElementById('admin-form-title').innerText = 'Add New ARRS Staff Member';
+      document.getElementById('admin-select-staff').value = 'NEW';
+      document.getElementById('admin-staff-name').value = '';
+      document.getElementById('admin-staff-role').value = 'Care Coordinator';
+      document.getElementById('admin-staff-wte').value = '1.0';
+      document.getElementById('admin-staff-contact').value = 'Ext. 4200';
+      document.getElementById('admin-staff-skills').value = '';
+      document.getElementById('admin-email-btn').style.display = 'none';
+      document.getElementById('clash-warning-banner').style.display = 'none';
+
+      DAYS.forEach(day => {
+        document.getElementById(`admin-site-${day}`).value = 'Oakwood Surgery - Main Site';
+        document.getElementById(`admin-room-${day}`).value = 'Room 1';
+        document.getElementById(`admin-time-${day}`).value = '08:30 - 16:30';
+      });
+    }
+
+    function handleAdminSubmit(event) {
+      event.preventDefault();
+
+      const name = document.getElementById('admin-staff-name').value.trim();
+      const role = document.getElementById('admin-staff-role').value;
+      const wte = parseFloat(document.getElementById('admin-staff-wte').value) || 1.0;
+      const contact = document.getElementById('admin-staff-contact').value.trim() || 'Ext. 4200';
+      const skillsInput = document.getElementById('admin-staff-skills').value;
+      const skills = skillsInput ? skillsInput.split(',').map(s => s.trim()).filter(s => s) : [];
+
+      if (!name) return;
+
+      const schedule = {};
+      DAYS.forEach(day => {
+        const site = document.getElementById(`admin-site-${day}`).value;
+        const room = document.getElementById(`admin-room-${day}`).value;
+        const time = document.getElementById(`admin-time-${day}`).value.trim() || '-';
+        schedule[day] = { practice: site, room: room, time: time };
+      });
+
+      if (currentEditingId) {
+        const staffIndex = ROTA_DATA.findIndex(s => s.id === currentEditingId);
+        if (staffIndex !== -1) {
+          ROTA_DATA[staffIndex] = { id: currentEditingId, name, role, wte, contact, skills, schedule };
+          logAuditTrail(`Updated staff rota record for ${name}`);
+        }
+      } else {
+        const newId = String(Date.now());
+        ROTA_DATA.push({ id: newId, name, role, wte, contact, skills, schedule });
+        logAuditTrail(`Created new staff member record for ${name} (${role})`);
+      }
+
+      filterTable();
+      switchTab('view');
+      alert('Staff record & rota successfully saved!');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      buildAdminDayEditors();
+      renderTable(ROTA_DATA);
+      switchUserRole(); // Initialize standard vs manager state
+    });
+  </script>
+</body>
+</html>
