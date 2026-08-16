@@ -56,5 +56,10 @@ Because this application is built as a static-ready single-file web application 
 
 ---
 
-## 📄 License
-Distributed under the MIT License. See `LICENSE` for more information.
+## 📄 License & Terms of Use
+
+**Demonstration and Portfolio Use Only**  
+Copyright (c) 2026. This project is shared strictly for portfolio display, technical demonstration, and evaluation purposes. 
+
+* **No Production Warranty:** This software is provided "as is", without warranty of any kind, express or implied. 
+* **Data Restriction:** This repository contains synthetic dummy data only. Unauthorized use with live NHS patient data or real staff PII is strictly prohibited.
