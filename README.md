@@ -1,4 +1,4 @@
-# 🩺 Primary Care Rota & Capacity Tracker PCN & GP practice Project
+# Primary Care Rota & Capacity Tracker PCN & GP practice Project
 
 > **⚠️ DEMO PURPOSE ONLY:** This application is a high-fidelity prototype built with synthetic data for demonstration, portfolio, and evaluation purposes only. It is **not** connected to any live General Practice, Primary Care Network (PCN), Integrated Care Board (ICB), or NHS Electronic Staff Record (ESR) systems. Do not input real patient or staff personal identifiable information (PII).
 > **Prototype / Portfolio:** Demonstration. Created to showcase healthcare-focused web development, data visualisation, privacy-aware design and digital transformation concepts, do not use with live real data, fictional data only displayed
@@ -50,10 +50,15 @@ As this project evolves from a high-fidelity prototype into a production-grade h
 
 Created to showcase healthcare-focused web development, data visualisation, privacy-aware design and digital transformation concepts, do not use with live real data, fictional data only
 
-## 📄 License & Terms of Use
+## Disclaimer
+FICTIONAL PORTFOLIO DEMONSTRATION ONLY
 
-**Demonstration and Portfolio Use Only**  
-Copyright (c) 2026. This project is shared strictly for portfolio display, technical demonstration, and evaluation purposes. 
+This application is not an NHS service, procurement system or clinical system.
 
-* **No Production Warranty:** This provided / showcased "as is", without warranty of any kind, express or implied. 
-* **Data Restriction:** This repository contains synthetic dummy data only. Unauthorized use with live NHS patient data or real staff PII is strictly prohibited.
+It is not intended for live NHS use, real procurement decisions, clinical use or storage of real patient or confidential organisational information.
+
+The scenarios, organisations, people, suppliers, costs and other information used within the demonstration are fictional.
+
+The application should not be copied, adopted or used as a live procurement or business-case system without appropriate professional, organisational, legal, financial, procurement, information governance and security review.
+
+Copyright © 2026 Mikejd90. All rights reserved. This project is for portfolio demonstration purposes only. No reuse, modification, or distribution is permitted."
